@@ -6,20 +6,52 @@ permalink: /publications/
 
 <div class="home">
 
-  <h1 class="page-heading">Conference papers</h1>
+  <h1 class="page-heading">Journal Articles</h1>
 
-  <ul class="post-list">
-    {% for post in site.publications reversed %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+  <ul class="publication-list">
+    {% for pub in site.publications reversed %}
 
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
+      {% if pub.categories contains 'journal' %}
+      <li class="publication-list-entry">
+        <div class="column-1">
+          <div><span class="publication-meta">{{ pub.date | date: "%b %-d, %Y" }}</span></div>
+          <img src="{{pub.thumbnail}}">
+        </div>
+        <div class="column-2">
+          <h2>
+            <a class="publication-link" href="{{ pub.url | prepend: site.baseurl }}">{{ pub.title }}</a>
+          </h2>
+          <h3>
+            <span class="publication-journal">{{ pub.journal }}</span>
+          </h3>
+        </div>
       </li>
+      {% endif%}
     {% endfor %}
   </ul>
 
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+  <h1 class="page-heading">Conference Proceedings</h1>
+
+  <ul class="publication-list">
+    {% for pub in site.publications reversed %}
+
+      {% if pub.categories contains 'conference' %}
+      <li class="publication-list-entry">
+        <div class="column-1">
+          <div><span class="publication-meta">{{ pub.date | date: "%b %-d, %Y" }}</span></div>
+          <img src="{{pub.thumbnail}}">
+        </div>
+        <div class="column-2">
+          <h2>
+            <a class="publication-link" href="{{ pub.url | prepend: site.baseurl }}">{{ pub.title }}</a>
+          </h2>
+          <h3>
+            <span class="publication-journal">{{ pub.journal }}</span>
+          </h3>
+        </div>
+      </li>
+      {% endif%}
+    {% endfor %}
+  </ul>
 
 </div>

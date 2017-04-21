@@ -173,6 +173,7 @@
 
 .page-heading {
     font-size: 20px;
+    clear: both;
 }
 
 .post-list {
@@ -239,4 +240,56 @@
             font-size: 18px;
         }
     }
+}
+
+
+.publication-list {
+    display: table;
+    width: 100%;
+    list-style-type: none;
+    clear: both;
+
+    .publication-list-entry {
+        // margin-top: 10px;
+        // margin-bottom: 10px;
+        clear: both;
+        display: table-row;
+
+        .column-1 {
+            // display: table-cell;
+            width: 256px;
+            float: left;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .column-2 {
+            display: table-row;
+            width: auto;
+            margin-top:10px;
+            margin-bottom:10px;
+        }
+
+        @include media-query($on-palm) {
+            .column-1 {
+                width: 128px
+            }
+        }
+    }
+}
+
+.publication-meta {
+    font-size: $small-font-size;
+    color: $grey-color;
+}
+
+.publication-link {
+    display: block;
+    font-size: 20px;
+}
+
+.publication-journal {
+    display: block;
+    font-size: 14px;
+    color: $grey-color-dark;
 }
