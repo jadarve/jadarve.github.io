@@ -15,6 +15,26 @@ Dense optical flow is a crucial visual cue for obstacle avoidance and motion con
 
 [PDF from ResearchGate](https://www.researchgate.net/publication/295833376_A_Filter_Formulation_for_Computing_Real_Time_Optical_Flow)
 
+[Source code](https://github.com/jadarve/optical-flow-filter)
+
+### Demo Video
+
+The following video shows the results of the algorithm on a real-life high-speed image sequence. The video shows the estimated optical flow color encoded using the Middlebury color wheel and the flow magnitude (below) colored as a heat-map. On average, the algorithm is capable of processing the input images at frame rates over 500 Hz, as it is shown on the runtime plot.
+
+|**Location**   | ANU campus
+|**Camera**     | Basler acA2000-164 monochrome USB3
+|**Resolution** | 1016x544
+|**Frequency**  | 300 Hz
+|**CPU**        | Intel i7-4790K
+|**GPU**        | Nvidia GTX 780
+
+<br/>
+
+<iframe class="youtube-video" src="https://www.youtube.com/embed/_oW1vMdBMuY" frameborder="0" allowfullscreen></iframe>
+
+
+### Bibtex
+
 ```
 @ARTICLE{2016_Adarve_optical_flow, 
     author={J. D. Adarve and R. Mahony}, 

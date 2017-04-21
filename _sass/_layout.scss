@@ -293,3 +293,13 @@
     font-size: 14px;
     color: $grey-color-dark;
 }
+
+
+.youtube-video {
+    width: 560px;
+    height: 315px;
+
+    @include media-query($on-palm) {
+        width: 280px
+    }
+}
