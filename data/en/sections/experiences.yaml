@@ -1,0 +1,42 @@
+# section information
+section:
+  name: Experiences
+  id: experiences
+  enable: true
+  weight: 5
+  showOnNavbar: true
+  # Can optionally hide the title in sections
+  # hideTitle: true 
+
+# Your experiences
+experiences:
+- company:
+    name: Genius Sports
+    url: "https://geniussports.com/"
+    location: Medellin
+    overview: Genius Sports is the official data, technology and commercial partner that powers the global ecosystem connecting sports, betting and media.
+  positions:
+  - designation: Principal Software Engineer
+    start: October 2019
+  - designation: Delivery Lead
+    start: October 2019
+    end: Decembet 2020
+  - designation: Senior Computer Vision Scientist
+    start: June 2018
+    end: October 2019
+    # responsibilities:
+    # - Design and develop XYZ tool for ABC task
+    # - Design, develop and manage disaster recovery tool [Xtool](https://www.example.com) that backup Kubernetes volumes, databases, and cluster's resource definition.
+    # - Lead backend team.
+
+- company:
+    name: Globant
+    url: "https://globant.com"
+    location: Medellin
+    # overview: TODO
+  positions:
+  - designation: Software Engineer - C++
+    start: July 2017
+    end: May 2018
+    responsibilities:
+    - Write C++.

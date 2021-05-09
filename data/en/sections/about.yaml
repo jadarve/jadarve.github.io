@@ -1,0 +1,51 @@
+# section information
+section:
+  name: About
+  id: about
+  enable: true
+  weight: 1
+  showOnNavbar: true
+  template: sections/about.html
+
+# your designation
+designation: Principal Software Engineer
+# your company information
+company:
+  name: Genius Sports.
+  url: "https://www.geniussports.com"
+
+# your resume. this file path should be relative to you "static" directory
+# TODO
+# resume: "files/resume.pdf"
+
+# a summary about you
+summary: I am passionate for solving difficult problems using software.I enjoy learning new things. I love coding (C++ and Golang in particular).
+
+# your social links
+# give as many as you want. use font-awesome for the icons.
+socialLinks:
+- name: Email
+  icon: "fas fa-envelope"
+  url: "juanda0718@gmail.com"
+
+- name: Github
+  icon: "fab fa-github"
+  url: "https://www.github.com/jadarve"
+
+- name: LinkedIn
+  icon: "fab fa-linkedin"
+  url: "https://www.linkedin.com/in/jadarve/"
+
+# your soft skills
+# give the percentage between 50 to 100 with 5 intervals.
+# currently supported colors: blue, yellow, pink, green, sky, orange
+softSkills:
+- name: Problem Solving
+  percentage: 100
+  color: green
+- name: Leadership
+  percentage: 100
+  color: blue
+- name: Team Work
+  percentage: 100
+  color: yellow

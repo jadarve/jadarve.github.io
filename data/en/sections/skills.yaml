@@ -1,0 +1,23 @@
+# section information
+section:
+  name: Skills
+  id: skills
+  enable: true
+  weight: 3
+  showOnNavbar: false
+  # Can optionally hide the title in sections
+  # hideTitle: true
+
+# Your Skills.
+# Give a summary of you each skill in the summary section.
+skills:
+  - name: Problem Solving
+    icon: "/images/sections/skills/kubernetes.png"
+    summary: I enjoy solving hard problems using software.
+  - name: Software Development
+    icon: "/images/sections/skills/kubernetes.png"
+    summary: I have worked on projects such as Android (Java, C++), Computer Vision (C++ and Python) and backend (Golang, Kotlin). I particularly enjoy C++ and Golang.
+  - name: Team Leading
+    icon: "/images/sections/skills/kubernetes.png"
+    summary: I have had the opportunity to lead and advise development teams during product development and operation.
+    #url : TODO
