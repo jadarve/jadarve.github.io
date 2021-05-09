@@ -4,8 +4,7 @@ nickname: "Juan"
 
 # greeting message before your name. it will default to "Hi! I am" if not provided
 greeting: "Hi! I am"
-# TODO
-# image: "images/author/john.png"
+image: "images/author/Juan.jpg"
 
 # give your some contact information. they will be used in the footer
 contactInfo:

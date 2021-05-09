@@ -30,6 +30,8 @@ enableEmoji: true
 
 # Site parameters
 params:
+  background: "images/background.jpg"
+
   # GitHub repo URL and branch of your site
   gitRepo: https://github.com/jadarve/jadarve.github.io
   gitBranch: master
