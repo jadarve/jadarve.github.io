@@ -1,0 +1,109 @@
+<!doctype html><html><head><title>Introducing rules_vulkan for Bazel</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="ie=edge"><link rel=stylesheet href=/css/bootstrap.min.css><link rel=stylesheet href=/css/layouts/main.css><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/navigators/navbar.css><link rel=stylesheet href=/css/plyr.css><link rel=stylesheet href=/css/flag-icon.min.css><link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;500;600" rel=stylesheet><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css><link rel=icon type=image/png href=/images/favicon_hu8376fd15465fef26ffe66b6bcf0ca686_13669_42x0_resize_box_2.png><link rel=stylesheet href=/css/style.css><meta name=description content="Introducing rules_vulkan for Bazel"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css><link rel=stylesheet href=/css/layouts/single.css><link rel=stylesheet href=/css/navigators/sidebar.css><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','G-3834TPPEY4','auto');ga('send','pageview');}</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body data-spy=scroll data-target=#TableOfContents data-offset=80><div class="container-fluid bg-dimmed wrapper"><nav class="navbar navbar-expand-xl top-navbar final-navbar shadow"><div class=container><button class="navbar-toggler navbar-light" id=sidebar-toggler type=button onclick=toggleSidebar()>
+<span class=navbar-toggler-icon></span></button>
+<a class=navbar-brand href=/><img src=/images/main-logo_hu864bbe108f1be1ae04b57f7f2fd9d631_5637_42x0_resize_box_2.png alt=Logo>Juan Adarve</a>
+<button class="navbar-toggler navbar-light" id=toc-toggler type=button onclick=toggleTOC()>
+<span class=navbar-toggler-icon></span></button><div class="collapse navbar-collapse lang-selector" id=top-nav-items><ul class="navbar-nav ml-auto"></ul></div></div><img src=/images/main-logo_hu864bbe108f1be1ae04b57f7f2fd9d631_5637_42x0_resize_box_2.png class=d-none id=main-logo alt=Logo>
+<img src=/images/inverted-logo_hu8376fd15465fef26ffe66b6bcf0ca686_13669_42x0_resize_box_2.png class=d-none id=inverted-logo alt="Inverted Logo"></nav><section class=sidebar-section id=sidebar-section><div class=sidebar-holder><div class=sidebar id=sidebar><form class=mx-auto method=get action=https://jadarve.github.io/search><input type=text name=keyword placeholder=Search data-search id=search-box></form><div class=sidebar-tree><ul class=tree id=tree><li id=list-heading><a href=/posts data-filter=all>Posts</a></li><div class=subtree><li><a href=/posts/today-i-learned/ title="Today I learned">Today I learned</a></li><li><a class=active href=/posts/rules_vulkan/ title="Introducing rules_vulkan">Introducing rules_vulkan</a></li></div></ul></div></div></div></section><section class=content-section id=content-section><div class=content><div class="container p-0 read-area"><div class="hero-area col-sm-12" id=hero-area style=background-image:url(https://jadarve.github.io/images/default-hero.jpg)></div><div class=page-content><div class="author-profile ml-auto align-self-lg-center"><img class=rounded-circle src=/images/author/Juan.jpg alt="Author Image"><h5 class=author-name>Juan David Adarve Bermudez</h5><p>May 23, 2021</p></div><div class=title><h1>Introducing rules_vulkan for Bazel</h1></div><div class=post-content id=post-content><p><a href=https://bazel.build/>Bazel</a> is a good multi-platform, multi-language build system designed for correctness and scalability. It supports programming languages such as Go, C++, Java, and Python, through the use of rule systems for each of them. Rules are stored in repositories (git, http archives) and are downloaded on-demand when they are referenced.</p><p>I use Bazel as the build system for my <a href=https://lluvia.ai>lluvia project</a>. I use C++ as the core language of the project, Python for creating easy to use wrappers for prototyping, Lua for describing compute stages, and finally, GLSL for coding compute shaders that run on the GPU.</p><p>For GLSL and Vulkan, I used some custom rules coded within the project for defining shaders and shader libraries. As those rules grew, I saw the opportunity to maintain them as an independent project that can serve anyone trying to use GLSL and Vulkan in their project.</p><h2 id=rules_vulkan>rules_vulkan</h2><p>The <a href=https://github.com/jadarve/rules_vulkan><code>rules_vulkan</code></a> project provides rules for accessing the <a href=https://vulkan.lunarg.com/sdk/home>Vulkan SDK</a> installed on the host system. By exposing the SDK to Bazel, one gets access to:</p><ul><li>The vulkan headers and libraries for creating C++ binaries.</li><li>Shader tools such as <code>glslc</code> for compiling shaders into SPIR-V representation, among others.</li></ul><h2 id=configuration>Configuration</h2><p>Include the following configuration in your project&rsquo;s <code>WORKSPACE</code> file.</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>load(<span style=color:#e6db74>&#34;@bazel_tools//tools/build_defs/repo:git.bzl&#34;</span>, <span style=color:#e6db74>&#34;git_repository&#34;</span>)
+
+git_repository(
+    name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;rules_vulkan&#34;</span>,
+    remote <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;https://github.com/jadarve/rules_vulkan.git&#34;</span>,
+    tag <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;v0.0.1&#34;</span>
+)
+
+load(<span style=color:#e6db74>&#34;@rules_vulkan//vulkan:repositories.bzl&#34;</span>, <span style=color:#e6db74>&#34;vulkan_repositories&#34;</span>)
+vulkan_repositories()
+</code></pre></div><p>By calling <code>vulkan_repositories()</code>, the package will look for the Vulkan SDK installed in your Operating System and create the following extra repositories:</p><table><thead><tr><th>Repository</th><th>Defined Targets</th></tr></thead><tbody><tr><td><code>vulkan_windows</code></td><td><code>vulkan_cc_library</code> for compiling C/C++ targets that depend on Vulkan. <code>glslc</code> filegroup for the GLSL compiler, used internally to compile shaders.</td></tr><tr><td><code>vulkan_linux</code></td><td>Nothing at the moment. The GLSL compiler is accessed directly from the system.</td></tr></tbody></table><h2 id=rules>Rules</h2><h3 id=glsl_header_library><code>glsl_header_library</code></h3><p>A GLSL header library defines a collection of <code>.glsl</code> files that can be included during compilation of a <code>glsl_shader</code>:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>load(<span style=color:#e6db74>&#34;@rules_vulkan//glsl:defs.bzl&#34;</span>, <span style=color:#e6db74>&#34;glsl_header_library&#34;</span>)
+
+glsl_header_library(
+    name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;mylib_glsl_library&#34;</span>,
+    hdrs <span style=color:#f92672>=</span> [
+        <span style=color:#e6db74>&#34;mylib/mylib.glsl&#34;</span>,
+        <span style=color:#e6db74>&#34;mylib/color/color.glsl&#34;</span>,
+    ],
+    <span style=color:#75715e># path from the repository&#39;s root that will be stripped</span>
+    strip_include_prefix <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;shader_lib&#34;</span>,
+    visibility <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#34;//visibility:public&#34;</span>]
+)
+</code></pre></div><h3 id=glsl_shader><code>glsl_shader</code></h3><p>A <code>glsl_shader</code> compiles a shader file (<code>.vert</code>, <code>.frag</code>, <code>.tesc</code>, <code>.tese</code>, <code>.geom</code>, <code>.comp</code>) to SPIR-V representation:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>load(<span style=color:#e6db74>&#34;@rules_vulkan//glsl:defs.bzl&#34;</span>, <span style=color:#e6db74>&#34;glsl_shader&#34;</span>)
+
+glsl_shader(
+    name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;assign_shader&#34;</span>,
+    shader <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;assign.comp&#34;</span>,
+    deps <span style=color:#f92672>=</span> [
+        <span style=color:#e6db74>&#34;//shader_lib:mylib_glsl_library&#34;</span>
+    ],
+    visibility <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#34;//visibility:public&#34;</span>]
+)
+</code></pre></div><h2 id=referencing-vulkan-libraries-in-cc-targets>Referencing vulkan libraries in CC targets</h2><p>As mentioned above <code>rules_vulkan</code> also creates extra repositories to access the Vulkan SDK installed on the host operating system: <code>vulkan_windows</code>, and <code>vulkan_linux</code>. For Windows in particular, it currently defines the <code>vulkan_cc_library</code> to access the vulkan headers and libraries. Below is an <a href=https://github.com/jadarve/rules_vulkan/tree/main/examples>example from the repo</a> to compile a simple binary that lists the available extensions:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>load(<span style=color:#e6db74>&#34;@rules_cc//cc:defs.bzl&#34;</span>, <span style=color:#e6db74>&#34;cc_binary&#34;</span>)
+
+config_setting (
+    name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;linux&#34;</span>,
+    constraint_values <span style=color:#f92672>=</span> [
+        <span style=color:#e6db74>&#34;@platforms//os:linux&#34;</span>
+    ],
+    visibility <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#34;//visibility:public&#34;</span>]
+)
+
+config_setting (
+    name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;windows&#34;</span>,
+    constraint_values <span style=color:#f92672>=</span> [
+        <span style=color:#e6db74>&#34;@platforms//os:windows&#34;</span>
+    ],
+    visibility <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#34;//visibility:public&#34;</span>]
+)
+
+cc_binary(
+    name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;list_extensions&#34;</span>,
+    srcs <span style=color:#f92672>=</span> [
+        <span style=color:#e6db74>&#34;list_extensions.cpp&#34;</span>
+    ],
+    linkopts <span style=color:#f92672>=</span> select({
+        <span style=color:#e6db74>&#34;//:linux&#34;</span>: [
+            <span style=color:#e6db74>&#34;-lvulkan&#34;</span>,
+        ],
+        <span style=color:#e6db74>&#34;//:windows&#34;</span>: [],
+    }),
+    deps <span style=color:#f92672>=</span> select({
+        <span style=color:#e6db74>&#34;//:windows&#34;</span>: [
+            <span style=color:#e6db74>&#34;@vulkan_windows//:vulkan_cc_library&#34;</span>,
+        ],
+        <span style=color:#e6db74>&#34;//conditions:default&#34;</span>: [],
+    }),
+    visibility <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#34;//visibility:public&#34;</span>]
+)
+</code></pre></div><p>The code for <code>list_extensions.cpp</code> is:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+<span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;cstdlib&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;iostream&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;vulkan/vulkan.hpp&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e></span>
+<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>() {
+
+    <span style=color:#66d9ef>const</span> vk<span style=color:#f92672>::</span>ApplicationInfo appInfo <span style=color:#f92672>=</span> vk<span style=color:#f92672>::</span>ApplicationInfo()
+            .setPApplicationName(<span style=color:#e6db74>&#34;list_extensions&#34;</span>)
+            .setApplicationVersion(<span style=color:#ae81ff>0</span>)
+            .setEngineVersion(<span style=color:#ae81ff>0</span>)
+            .setPEngineName(<span style=color:#e6db74>&#34;rules_vulkan&#34;</span>);
+
+    <span style=color:#66d9ef>const</span> vk<span style=color:#f92672>::</span>InstanceCreateInfo instanceInfo <span style=color:#f92672>=</span> vk<span style=color:#f92672>::</span>InstanceCreateInfo()
+            .setPApplicationInfo(<span style=color:#f92672>&amp;</span>appInfo);
+
+    vk<span style=color:#f92672>::</span>Instance instance;
+    vk<span style=color:#f92672>::</span>Result result <span style=color:#f92672>=</span> vk<span style=color:#f92672>::</span>createInstance(<span style=color:#f92672>&amp;</span>instanceInfo, <span style=color:#66d9ef>nullptr</span>, <span style=color:#f92672>&amp;</span>instance);
+    <span style=color:#66d9ef>if</span> (result <span style=color:#f92672>!=</span> vk<span style=color:#f92672>::</span>Result<span style=color:#f92672>::</span>eSuccess) {
+        std<span style=color:#f92672>::</span>cerr <span style=color:#f92672>&lt;&lt;</span> <span style=color:#e6db74>&#34;error creating vulkan instance&#34;</span> <span style=color:#f92672>&lt;&lt;</span> std<span style=color:#f92672>::</span>endl;
+        exit(<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>);
+    }
+
+    <span style=color:#66d9ef>auto</span> extensions <span style=color:#f92672>=</span> vk<span style=color:#f92672>::</span>enumerateInstanceExtensionProperties();
+    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>const</span> <span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> ext: extensions) {
+        std<span style=color:#f92672>::</span>cout <span style=color:#f92672>&lt;&lt;</span> ext.extensionName <span style=color:#f92672>&lt;&lt;</span> std<span style=color:#f92672>::</span>endl; 
+    }
+
+    <span style=color:#66d9ef>return</span> EXIT_SUCCESS;
+}
+</code></pre></div><h2 id=future-work>Future work</h2><p>In the example above, notice that for linux, the dependency on Vulkan is accessed directly from the OS. In particular for Ubuntu, the LunarG SDK can be installed using the regular <code>apt install</code> method and hence, the headers, libraries, and tools (glslc), are installed distributed across different folders in the system. This makes it hard for creating a <code>vulkan_linux</code> repository as I need to access several locations from the system. That still does not work.</p><p>Also, there is no support for MacOS at the moment.</p></div><div class=btn-improve-page><a href=https://github.com/jadarve/jadarve.github.io/edit/master/content/posts/rules_vulkan.md title="Improve this page" target=_blank rel=noopener><i class="fas fa-code-branch"></i>Improve this page</a></div><hr><div class="row next-prev-navigator"><div class="col-md-6 previous-article"><a href=/search/ title="Search Results" class="btn btn-outline-info"><div><i class="fas fa-chevron-circle-left"></i>Prev</div><div class=next-prev-text>Search Results</div></a></div></div><hr></div></div></div><a id=scroll-to-top class=btn><i class="fas fa-chevron-circle-up"></i></a></section><section class=toc-section id=toc-section><div class=toc-holder><h5 class="text-center pl-3">Table of Contents</h5><hr><div class=toc><nav id=TableOfContents><ul><li><a href=#rules_vulkan>rules_vulkan</a></li><li><a href=#configuration>Configuration</a></li><li><a href=#rules>Rules</a><ul><li><a href=#glsl_header_library><code>glsl_header_library</code></a></li><li><a href=#glsl_shader><code>glsl_shader</code></a></li></ul></li><li><a href=#referencing-vulkan-libraries-in-cc-targets>Referencing vulkan libraries in CC targets</a></li><li><a href=#future-work>Future work</a></li></ul></nav></div></div></section></div><footer class="container-fluid text-center align-content-center footer pb-2"><div class="container pt-5"><div class="row text-left"><div class="col-md-4 col-sm-12"><h5>Navigation</h5><ul><li class=nav-item><a class=smooth-scroll href=/#about>About</a></li><li class=nav-item><a class=smooth-scroll href=/#recent-posts>Recent Posts</a></li><li class=nav-item><a class=smooth-scroll href=/#projects>Projects</a></li><li class=nav-item><a class=smooth-scroll href=/#education>Education</a></li><li class=nav-item><a class=smooth-scroll href=/#experiences>Experiences</a></li></ul></div><div class="col-md-4 col-sm-12"><h5>Contact me:</h5><ul><li><span>Email:</span> <span>juanda0718[at]gmail.com</span></li></ul></div><div class="col-md-4 col-sm-12"><p>Stay up to date with email notification</p><form><div class=form-group><input type=email class=form-control id=exampleInputEmail1 aria-describedby=emailHelp placeholder="Enter email">
+<small id=emailHelp class="form-text text-muted">We'll never share your email with anyone else.</small></div><button type=submit class="btn btn-info">Submit</button></form></div></div></div><hr><div class=container><div class="row text-left"><div class=col-md-4><a id=theme href=https://github.com/hossainemruz/toha target=_blank rel=noopener><img src=/images/theme-logo_hu8376fd15465fef26ffe66b6bcf0ca686_13669_32x0_resize_box_2.png alt="Toha Theme Logo">
+Toha</a></div><div class="col-md-4 text-center">© 2021 Copyright.</div><div class="col-md-4 text-right"><a id=hugo href=https://gohugo.io/ target=_blank rel=noopener>Powered by
+<img src=/images/hugo-logo.svg alt="Hugo Logo" height=18></a></div></div></div></footer><script type=text/javascript src=/js/jquery-3.4.1.min.js></script><script type=text/javascript src=/js/popper.min.js></script><script type=text/javascript src=/js/bootstrap.min.js></script><script type=text/javascript src=/js/navbar.js></script><script type=text/javascript src=/js/plyr.js></script><script type=text/javascript src=/js/main.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js></script><script src=/js/single.js></script><script>hljs.initHighlightingOnLoad();</script></body></html>
